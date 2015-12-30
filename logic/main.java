@@ -47,31 +47,38 @@ public class main {
 		Integer idx = 0;
 		//HACER PETICION DE LOS COCHES EN CADA PAGINA DE LAS CONCESIONARIAS
 		for(String urlConsecionaria: paginasConsecionarias){
-			System.out.println((++idx) + " de " + numMax);
-			urlParameters = "/Seminuevos/Virtual/seminuevoslista.aspx?marcaID=&modeloID=&versionID=&anioI=&anioF=&pMinimo=&pMaximo=&m=&Certif=&b=&pageIndex=0";
-			targetURL = urlConsecionaria + urlParameters;
-			try{
-				String paginaWebCoches = WebRequest.excutePost(targetURL, "");
-				WebPageConsecionaria htmlCons = new WebPageConsecionaria(paginaWebCoches);
-				htmlConsecionarias.add(htmlCons);
-			}
-			catch(Exception e){
-				System.out.println(urlConsecionaria + "-----> no se pudo ingresar");
+			++idx;
+			//System.out.println((idx) + " de " + numMax);
+			if(idx == 1){
+				urlParameters = "/Seminuevos/Virtual/seminuevoslista.aspx?marcaID=&modeloID=&versionID=&anioI=&anioF=&pMinimo=&pMaximo=&m=&Certif=&b=&pageIndex=0";
+				targetURL = urlConsecionaria + urlParameters;
 				System.out.println(targetURL);
-				System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-			}						
+				try{
+					String paginaWebCoches = WebRequest.excutePost(targetURL, "");
+					WebPageConsecionaria htmlCons = new WebPageConsecionaria(paginaWebCoches);
+					htmlConsecionarias.add(htmlCons);
+				}
+				catch(Exception e){
+					System.out.println(urlConsecionaria + "-----> no se pudo ingresar");
+					System.out.println(targetURL);
+					System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+				}
+			}
 		}
 
 
 		for(WebPageConsecionaria webConsecionaria: htmlConsecionarias){
+			//System.out.println(webConsecionaria.getHtmlPagina());
+			//System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 			Document doc;
-			try {
-				doc = Jsoup.connect(webConsecionaria.getHtmlPagina()).get();
-				Element divIconos = doc.getElementsByClass("tab I").first();
-				System.out.println( divIconos.child(0).toString());
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			doc = Jsoup.parse(webConsecionaria.getHtmlPagina());
+			//System.out.println(doc.text());
+			//System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+			Elements divIconos = doc.select(".tab.I");
+			Elements tablaCoches = divIconos.select("table.item");
+			//Si existen coches
+			if(tablaCoches.size() > 0){
+				
 			}
 		}
 		
